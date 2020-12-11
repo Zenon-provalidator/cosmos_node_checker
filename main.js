@@ -25,8 +25,8 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	let blockHeight = await server.getBlockHeight()
 	let rpcHeight = await rpc.getRpcHeight()
 	let checkDialPort = await server.checkDialPort()
-	let checkLcdPort = await server.checkLcdPort()
-	let checkValidatorConnect = await server.checkValidatorConnect()
+	let checkLcdPort = false
+	let checkValidatorConnect = false
 	let checkValidatorSign = await server.checkValidatorSign(blockHeight)
 	
 	telegramBot.setVariables({
@@ -104,6 +104,7 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 			alert.sendMSG(`ALERT! Height ${blockHeight.toLocaleString()} is missed.\n${cfg.EXTERN_EXPLORER}/blocks/${blockHeight}`)
 		}
 	} else { //sentry
+		checkValidatorConnect = await server.checkValidatorConnect()
 		if (checkValidatorConnect === false) {
 			if(checkDialPort) {
 				if(validatorConnectTryCnt == 0){
@@ -123,6 +124,7 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	
 	// LCD check
 	if (cfg.PROJECT_LCD_USE === true){
+		checkLcdPort = await server.checkLcdPort()
 		if(lcdAlertCnt == 0){
 			alert.sendMSG(`ALERT! LCD is down.`)
 		} 
