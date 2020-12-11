@@ -43,6 +43,13 @@ const getDiskUsage = (async () => {
 })
 
 // *********project check**********
+// project daemon status
+const getDeamonStatus = (async () => {
+	let cmd = `ps -ef | grep ${cfg.PROJECT_DAEMON_NAME} | grep -v 'grep' | wc -l`
+	let res = await exec(cmd)
+	let status = parseInt(res.toString()) > 0 ? true : false
+	return status
+})
 
 // block height
 const getBlockHeight = (async () => {
@@ -107,6 +114,7 @@ module.exports = {
 	getDiskUsage : getDiskUsage,
 	getBlockHeight : getBlockHeight,
 	getPeerCount : getPeerCount,
+	getDeamonStatus : getDeamonStatus,
 	checkDialPort : checkDialPort,
 	checkLcdPort : checkLcdPort,
 	checkValidatorConnect : checkValidatorConnect,
