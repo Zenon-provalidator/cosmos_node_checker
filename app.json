@@ -1,0 +1,9 @@
+{
+	"apps": [{
+		"name": "cosmos_node_checker",
+		"script": "main.js",
+		"watch": false,
+		"env": {
+		}
+	}]
+}
