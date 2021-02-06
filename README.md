@@ -1,5 +1,6 @@
 # cosmos_node_checker
 
+##install
 npm install
 
 npm install -g pm2
