@@ -53,7 +53,8 @@ const getDeamonStatus = (async () => {
 
 // block height
 const getBlockHeight = (async () => {
-	let cmd = `${cfg.PROJECT_CLIENT_NAME} status | jq .sync_info.latest_block_height | tr -d '"'`
+	let cmd = `curl -s 'http://localhost:26657/status' | jq '.result.sync_info.latest_block_height' | tr -d '"'`
+	//let cmd = `${cfg.PROJECT_CLIENT_NAME} status | jq .sync_info.latest_block_height | tr -d '"'`
 	let res = await exec(cmd)
 	let blockHeight = parseInt(res.toString())
 	return blockHeight
