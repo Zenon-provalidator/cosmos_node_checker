@@ -95,7 +95,7 @@ const checkValidatorConnect = (async () => {
 // validator sign check
 const checkValidatorSign = (async (latestHeight) => {
 	//let cmd = `${cfg.PROJECT_CLIENT_NAME} query block ${latestHeight} --trust-node=true | jq .block.last_commit.precommits[].validator_address | grep ${cfg.VALIDATOR_HASH} | tr -d '"'`
-	let cmd = `${cfg.PROJECT_CLIENT_NAME} q block ${latestHeight} --trust-node=true | jq .block.last_commit.signatures[].validator_address | grep ${cfg.VALIDATOR_HASH} | wc -l`
+	let cmd = `${cfg.PROJECT_CLIENT_NAME} q block ${latestHeight} | jq .block.last_commit.signatures[].validator_address | grep ${cfg.VALIDATOR_HASH} | wc -l`
 	let res = await exec(cmd)
 	let count = parseInt(res.toString())	
 	return count > 0 ? true : false
