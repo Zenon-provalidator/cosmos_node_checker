@@ -53,7 +53,8 @@ const getDeamonStatus = (async () => {
 
 // block height
 const getBlockHeight = (async () => {
-	let cmd = `${cfg.PROJECT_CLIENT_NAME} status | jq .sync_info.latest_block_height | tr -d '"'`
+	let cmd = `curl -s 'http://localhost:26657/status' | jq '.result.sync_info.latest_block_height' | tr -d '"'`
+	//let cmd = `${cfg.PROJECT_CLIENT_NAME} status | jq .sync_info.latest_block_height | tr -d '"'`
 	let res = await exec(cmd)
 	let blockHeight = parseInt(res.toString())
 	return blockHeight
@@ -94,7 +95,7 @@ const checkValidatorConnect = (async () => {
 // validator sign check
 const checkValidatorSign = (async (latestHeight) => {
 	//let cmd = `${cfg.PROJECT_CLIENT_NAME} query block ${latestHeight} --trust-node=true | jq .block.last_commit.precommits[].validator_address | grep ${cfg.VALIDATOR_HASH} | tr -d '"'`
-	let cmd = `${cfg.PROJECT_CLIENT_NAME} q block ${latestHeight} --trust-node=true | jq .block.last_commit.signatures[].validator_address | grep ${cfg.VALIDATOR_HASH} | wc -l`
+	let cmd = `${cfg.PROJECT_CLIENT_NAME} q block ${latestHeight} | jq .block.last_commit.signatures[].validator_address | grep ${cfg.VALIDATOR_HASH} | wc -l`
 	let res = await exec(cmd)
 	let count = parseInt(res.toString())	
 	return count > 0 ? true : false
