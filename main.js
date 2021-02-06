@@ -175,10 +175,12 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 
 const botStart = (() => {
 	botJob.start()
+	botStatusFlag = true
 })
 
 const botStop = (() => {
 	botJob.stop()
+	botStatusFlag = false
 })
 
 const botStatus = (() => {
