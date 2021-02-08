@@ -23,7 +23,7 @@ const getCpuUsage = (async () => {
 
 // disk
 const getDiskUsage = (async () => {
-	let cmd = `df -h | grep ${cfg.PROJECT_DAEMON_NAME}VG | wc -l`
+	let cmd = `df -h | grep ${cfg.PROJECT_DISK_NAME} | wc -l`
 	let res = await exec(cmd)
 	let isVg = parseInt(res.toString()) > 0 ? true : false
 			
