@@ -28,7 +28,7 @@ const getDiskUsage = (async () => {
 	let isVg = parseInt(res.toString()) > 0 ? true : false
 			
 	if(isVg){
-		let cmd = `df -h | grep ${cfg.PROJECT_DAEMON_NAME}VG | awk '{print $5}' | tr -d '%'`
+		let cmd = `df -h | grep ${cfg.PROJECT_DISK_NAME} | awk '{print $5}' | tr -d '%'`
 //		logger.info(`cmd : ${cmd}`)
 		let res = await exec(cmd)
 		let diskUsage = parseFloat(res.toString()).toFixed(2)
