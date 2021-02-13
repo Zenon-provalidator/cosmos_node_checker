@@ -2,6 +2,27 @@ const cfg = require('dotenv').config({ path: './config' }).parsed //load config 
 const exec = require('child_process').execSync
 const logger = require('./logger').log4js
 
+
+//*********daemon ***********
+// start
+const startDaemon = (async () => {
+        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_start.sh`
+        let res = await exec(cmd)
+        return res.toString()
+})
+
+const stopDaemon = (async () => {
+        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_stop.sh`
+        let res = await exec(cmd)
+        return res.toString()
+})
+
+const restartDaemon = (async () => {
+        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_restart.sh`
+        let res = await exec(cmd)
+        return res.toString()
+})
+
 // *********server check**********
 // memory
 const getMemoryUsage = (async () => {
