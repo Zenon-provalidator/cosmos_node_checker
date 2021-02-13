@@ -45,16 +45,22 @@ bot.command('config', (ctx) => {
 	ctx.reply(config)
 })
 
-bot.command('daemon_start', (ctx) => {
-	ctx.reply(await server.startDaemon())
+bot.command('daemon_start', async(ctx) => {
+	const res = await server.startDaemon()
+	logger.info(res)
+	ctx.reply(res)
 })
 
-bot.command('daemon_stop', (ctx) => {
-        ctx.reply(await server.stopDaemon())
+bot.command('daemon_stop', async(ctx) => {
+        const res = await server.stopDaemon()
+        logger.info(res)
+        ctx.reply(res)
 })
 
-bot.command('daemon_restart', (ctx) => {
-        ctx.reply(await server.restartDaemon())
+bot.command('daemon_restart', async(ctx) => {
+        const res = await server.restartDaemon()
+        logger.info(res)
+        ctx.reply(res)
 })
 
 bot.startPolling()

@@ -131,6 +131,9 @@ const connectValidator = (async () => {
 })
 
 module.exports = {
+	startDaemon : startDaemon,
+	stopDaemon : stopDaemon,
+	restartDaemon : restartDaemon,
 	getMemoryUsage : getMemoryUsage,
 	getCpuUsage : getCpuUsage,
 	getDiskUsage : getDiskUsage,
