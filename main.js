@@ -147,7 +147,7 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	}
 	
 	// LCD check
-	if (cfg.PROJECT_LCD_USE === true){
+	if (cfg.PROJECT_LCD_USE == 'true'){
 		checkLcdPort = await server.checkLcdPort()
 		if(lcdAlertCnt == 0){
 			alert.sendMSG(`ALERT! LCD is down.`)
