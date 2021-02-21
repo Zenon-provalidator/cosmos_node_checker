@@ -125,7 +125,9 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 			missedBlockHeight = blockHeight
 			alert.sendMSG(`ALERT! Height ${blockHeight.toLocaleString()} is missed.\n${cfg.EXTERN_EXPLORER}/blocks/${blockHeight}`)
 		}
-	} else { //sentry
+	} else if(cfg.SERVER_TYPE == 'lcd'){//lcd
+		//nothing
+	}else { //sentry
 		checkValidatorConnect = await server.checkValidatorConnect()
 		if (checkValidatorConnect === false) {
 			if(checkDialPort) {
