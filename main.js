@@ -128,22 +128,24 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	} else if(cfg.SERVER_TYPE == 'lcd'){//lcd
 		//nothing
 	}else { //sentry
-		checkValidatorConnect = await server.checkValidatorConnect()
-		if (checkValidatorConnect === false) {
-			if(checkDialPort) {
-				if(validatorConnectTryCnt == 0){
-					alert.sendMSG(`ALERT! Validator is not connected. Try connect validator.`)
-					let connectValidator = await server.connectValidator()
-					
-					if(connectValidator === false){
-						alert.sendMSG(`ALERT! Validator connect fail.`)
+		if(cfg.CHECK_VALIDATOR_CONNECT == 'true'){
+			checkValidatorConnect = await server.checkValidatorConnect()
+			if (checkValidatorConnect === false) {
+				if(checkDialPort) {
+					if(validatorConnectTryCnt == 0){
+						alert.sendMSG(`ALERT! Validator is not connected. Try connect validator.`)
+						let connectValidator = await server.connectValidator()
+						
+						if(connectValidator === false){
+							alert.sendMSG(`ALERT! Validator connect fail.`)
+						}
 					}
+					validatorConnectTryCnt = validatorConnectTryCnt < cfg.SERVER_ALERT_VALIDATORCONNECT_WAIT ? validatorConnectTryCnt + 1 : 0
+				} else {
+					alert.sendMSG(`ALERT! Dialingport is not opened.`)
 				}
-				validatorConnectTryCnt = validatorConnectTryCnt < cfg.SERVER_ALERT_VALIDATORCONNECT_WAIT ? validatorConnectTryCnt + 1 : 0
-			} else {
-				alert.sendMSG(`ALERT! Dialingport is not opened.`)
 			}
-		}			
+		}
 	}
 	
 	// LCD check
