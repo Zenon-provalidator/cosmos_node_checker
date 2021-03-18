@@ -32,8 +32,8 @@ bot.command('status', async (ctx) => {
 bot.command('server', (ctx) => {
 	try{
 		let blockHeight = typeof variables.blockHeight === undefined ? undefined : variables.blockHeight.toLocaleString()
-		let rpcHeight = typeof variables.rpcHeight === undefined ? undefined : variables.rpcHeight.toLocaleString()
-		ctx.reply(`Memory : ${variables.mem}%\nCpu : ${variables.cpu}%\nDisk : ${variables.disk}%\nPeerCount : ${variables.peer}\nLatestHeight : ${blockHeight}\nRpcHeight : ${rpcHeight}\n`)
+		//let rpcHeight = typeof variables.rpcHeight === undefined ? undefined : variables.rpcHeight.toLocaleString()
+		ctx.reply(`Memory : ${variables.mem}%\nCpu : ${variables.cpu}%\nDisk : ${variables.disk}%\nPeerCount : ${variables.peer}\nLatestHeight : ${blockHeight}`)
 	} catch (err){
 		ctx.reply(err)
 	}	
@@ -43,6 +43,24 @@ bot.command('config', (ctx) => {
 	const filePath = path.join(__dirname, "../config")
 	let config = fs.readFileSync(filePath,{encoding:'utf8', flag:'r'})
 	ctx.reply(config)
+})
+
+bot.command('daemon_start', async(ctx) => {
+	const res = await server.startDaemon()
+	logger.info(res)
+	ctx.reply(res)
+})
+
+bot.command('daemon_stop', async(ctx) => {
+        const res = await server.stopDaemon()
+        logger.info(res)
+        ctx.reply(res)
+})
+
+bot.command('daemon_restart', async(ctx) => {
+        const res = await server.restartDaemon()
+        logger.info(res)
+        ctx.reply(res)
 })
 
 bot.startPolling()

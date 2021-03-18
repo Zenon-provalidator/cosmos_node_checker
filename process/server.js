@@ -2,6 +2,27 @@ const cfg = require('dotenv').config({ path: './config' }).parsed //load config 
 const exec = require('child_process').execSync
 const logger = require('./logger').log4js
 
+
+//*********daemon ***********
+// start
+const startDaemon = (async () => {
+        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_start.sh`
+        let res = await exec(cmd)
+        return res.toString()
+})
+
+const stopDaemon = (async () => {
+        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_stop.sh`
+        let res = await exec(cmd)
+        return res.toString()
+})
+
+const restartDaemon = (async () => {
+        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_restart.sh`
+        let res = await exec(cmd)
+        return res.toString()
+})
+
 // *********server check**********
 // memory
 const getMemoryUsage = (async () => {
@@ -23,12 +44,12 @@ const getCpuUsage = (async () => {
 
 // disk
 const getDiskUsage = (async () => {
-	let cmd = `df -h | grep ${cfg.PROJECT_DAEMON_NAME}VG | wc -l`
+	let cmd = `df -h | grep ${cfg.PROJECT_DISK_NAME} | wc -l`
 	let res = await exec(cmd)
 	let isVg = parseInt(res.toString()) > 0 ? true : false
 			
 	if(isVg){
-		let cmd = `df -h | grep ${cfg.PROJECT_DAEMON_NAME}VG | awk '{print $5}' | tr -d '%'`
+		let cmd = `df -h | grep ${cfg.PROJECT_DISK_NAME} | awk '{print $5}' | tr -d '%'`
 //		logger.info(`cmd : ${cmd}`)
 		let res = await exec(cmd)
 		let diskUsage = parseFloat(res.toString()).toFixed(2)
@@ -53,7 +74,8 @@ const getDeamonStatus = (async () => {
 
 // block height
 const getBlockHeight = (async () => {
-	let cmd = `${cfg.PROJECT_CLIENT_NAME} status | jq .sync_info.latest_block_height | tr -d '"'`
+	let cmd = `curl -s 'http://localhost:26657/status' | jq '.result.sync_info.latest_block_height' | tr -d '"'`
+	//let cmd = `${cfg.PROJECT_CLIENT_NAME} status | jq .sync_info.latest_block_height | tr -d '"'`
 	let res = await exec(cmd)
 	let blockHeight = parseInt(res.toString())
 	return blockHeight
@@ -94,7 +116,7 @@ const checkValidatorConnect = (async () => {
 // validator sign check
 const checkValidatorSign = (async (latestHeight) => {
 	//let cmd = `${cfg.PROJECT_CLIENT_NAME} query block ${latestHeight} --trust-node=true | jq .block.last_commit.precommits[].validator_address | grep ${cfg.VALIDATOR_HASH} | tr -d '"'`
-	let cmd = `${cfg.PROJECT_CLIENT_NAME} q block ${latestHeight} --trust-node=true | jq .block.last_commit.signatures[].validator_address | grep ${cfg.VALIDATOR_HASH} | wc -l`
+	let cmd = `${cfg.PROJECT_CLIENT_NAME} q block ${latestHeight} | jq .block.last_commit.signatures[].validator_address | grep ${cfg.VALIDATOR_HASH} | wc -l`
 	let res = await exec(cmd)
 	let count = parseInt(res.toString())	
 	return count > 0 ? true : false
@@ -109,6 +131,9 @@ const connectValidator = (async () => {
 })
 
 module.exports = {
+	startDaemon : startDaemon,
+	stopDaemon : stopDaemon,
+	restartDaemon : restartDaemon,
 	getMemoryUsage : getMemoryUsage,
 	getCpuUsage : getCpuUsage,
 	getDiskUsage : getDiskUsage,

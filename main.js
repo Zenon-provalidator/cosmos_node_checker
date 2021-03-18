@@ -16,6 +16,8 @@ let checkedBlockHeight = 0
 let missedBlockHeight = 0
 let validatorConnectTryCnt = 0
 let botStatusFlag = false
+let executeCnt = 0
+let blockCheck = [] // block check height array
 
 const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	let mem = await server.getMemoryUsage()
@@ -23,7 +25,7 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	let disk = await server.getDiskUsage()
 	let peer = await server.getPeerCount()
 	let blockHeight = await server.getBlockHeight()
-	let rpcHeight = await rpc.getRpcHeight()
+	//let rpcHeight = await rpc.getRpcHeight()
 	let checkDialPort = await server.checkDialPort()
 	let checkLcdPort = false
 	let checkValidatorConnect = false
@@ -34,8 +36,8 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 		cpu : cpu,
 		disk : disk,
 		peer : peer,
-		blockHeight : blockHeight,
-		rpcHeight : rpcHeight		
+		blockHeight : blockHeight
+		//rpcHeight : rpcHeight		
 	})
 	// memory check
 	if(mem > parseFloat(cfg.SERVER_ALERT_MEMORY)) {
@@ -78,23 +80,43 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	}
 	
 	// block height check
-	if(blockHeight+5 < rpcHeight) {
-		let heightDiff = rpcHeight - blockHeight
-		
-		if(blockHeight > checkedBlockHeight){
-			checkedBlockHeight = blockHeight 
-			alert.sendMSG(`ALERT! Server height is lower than extern height. ${cfg.EXTERN_RPC_URL}\nDiff=${heightDiff.toLocaleString()}\nserver=${blockHeight.toLocaleString()}\nextern=${rpcHeight.toLocaleString()}`)
-		} 
-//		logger.info(`blockHeightAlertCnt : ${blockHeightAlertCnt}`)
-	} else if (blockHeight > checkedBlockHeight){
-		let heightDiff = blockHeight - rpcHeight 
-		
-		if(checkedBlockHeight > blockHeight){
-			checkedBlockHeight = blockHeight 
-			alert.sendMSG(`ALERT! Extern height is lower than server height. ${cfg.EXTERN_RPC_URL}\nDiff=${heightDiff.toLocaleString()}\nserver=${blockHeight.toLocaleString()}\nextern=${rpcHeight.toLocaleString()}`)
-		} 
-//		logger.info(`blockHeightAlertCnt : ${blockHeightAlertCnt}`)
+	blockCheck[executeCnt] = blockHeight
+	let heightDiff = blockCheck[executeCnt] - blockCheck[executeCnt-1]
+
+//	logger.info(`executeCnt:${executeCnt}`)
+//	logger.info(`blockCheck.length:${blockCheck.length}`)
+
+	if(blockCheck.length > 1){ //need history
+		if(heightDiff > cfg.SERVER_ALERT_BLOCK_ERROR_RANGE){ // server block height is abnormal
+			let rpcHeight = await rpc.getRpcHeight()
+			alert.sendMSG(`ALERT! Server height is abnormal.\n${cfg.EXTERN_RPC_URL}/status\nExtern=${rpcHeight.toLocaleString()}\nDiff=${heightDiff.toLocaleString()}\nCurrentblockheight=${blockCheck[executeCnt].toLocaleString()}\nPreblockheight=${blockCheck[executeCnt-1].toLocaleString()}`)
+		} else {
+			let rpcHeight = await rpc.getRpcHeight()
+			if(blockCheck[executeCnt] === blockCheck[executeCnt-1] === blockCheck[executeCnt-2] === blockCheck[executeCnt-3] === blockCheck[executeCnt-4]){ //chain is stop
+				alert.sendMSG(`ALERT! Maybe chain is down.\n${cfg.EXTERN_RPC_URL}/status\nExtern=${rpcHeight.toLocaleString()}\nDiff=${heightDiff.toLocaleString()}\nCurrentblockheight=${blockCheck[executeCnt].toLocaleString()}\nPreblockheight=${blockCheck[executeCnt-1].toLocaleString()}`)
+			}else{
+				// normal
+//				logger.info(`Diff=${heightDiff.toLocaleString()}\nCurrentblockheight=${blockCheck[executeCnt].toLocaleString()}\nPreblockheight=${blockCheck[executeCnt-1].toLocaleString()}`)
+			}
+		}
 	}
+//	if(blockHeight+5 < rpcHeight) {
+//		let heightDiff = rpcHeight - blockHeight
+//		
+//		if(blockHeight > checkedBlockHeight){
+//			checkedBlockHeight = blockHeight 
+//			alert.sendMSG(`ALERT! Server height is lower than extern height. ${cfg.EXTERN_RPC_URL}\nDiff=${heightDiff.toLocaleString()}\nserver=${blockHeight.toLocaleString()}\nextern=${rpcHeight.toLocaleString()}`)
+//		} 
+////		logger.info(`blockHeightAlertCnt : ${blockHeightAlertCnt}`)
+//	} else if (blockHeight > checkedBlockHeight){
+//		let heightDiff = blockHeight - rpcHeight 
+//		
+//		if(checkedBlockHeight > blockHeight){
+//			checkedBlockHeight = blockHeight 
+//			alert.sendMSG(`ALERT! Extern height is lower than server height. ${cfg.EXTERN_RPC_URL}\nDiff=${heightDiff.toLocaleString()}\nserver=${blockHeight.toLocaleString()}\nextern=${rpcHeight.toLocaleString()}`)
+//		} 
+////		logger.info(`blockHeightAlertCnt : ${blockHeightAlertCnt}`)
+//	}
 	
 	// validator connect check
 	if(cfg.SERVER_TYPE == 'validator'){
@@ -103,34 +125,40 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 			missedBlockHeight = blockHeight
 			alert.sendMSG(`ALERT! Height ${blockHeight.toLocaleString()} is missed.\n${cfg.EXTERN_EXPLORER}/blocks/${blockHeight}`)
 		}
-	} else { //sentry
-		checkValidatorConnect = await server.checkValidatorConnect()
-		if (checkValidatorConnect === false) {
-			if(checkDialPort) {
-				if(validatorConnectTryCnt == 0){
-					alert.sendMSG(`ALERT! Validator is not connected. Try connect validator.`)
-					let connectValidator = await server.connectValidator()
-					
-					if(connectValidator === false){
-						alert.sendMSG(`ALERT! Validator connect fail.`)
+	} else if(cfg.SERVER_TYPE == 'lcd'){//lcd
+		//nothing
+	}else { //sentry
+		if(cfg.CHECK_VALIDATOR_CONNECT == 'true'){
+			checkValidatorConnect = await server.checkValidatorConnect()
+			if (checkValidatorConnect === false) {
+				if(checkDialPort) {
+					if(validatorConnectTryCnt == 0){
+						alert.sendMSG(`ALERT! Validator is not connected. Try connect validator.`)
+						let connectValidator = await server.connectValidator()
+						
+						if(connectValidator === false){
+							alert.sendMSG(`ALERT! Validator connect fail.`)
+						}
 					}
+					validatorConnectTryCnt = validatorConnectTryCnt < cfg.SERVER_ALERT_VALIDATORCONNECT_WAIT ? validatorConnectTryCnt + 1 : 0
+				} else {
+					alert.sendMSG(`ALERT! Dialingport is not opened.`)
 				}
-				validatorConnectTryCnt = validatorConnectTryCnt < cfg.SERVER_ALERT_VALIDATORCONNECT_WAIT ? validatorConnectTryCnt + 1 : 0
-			} else {
-				alert.sendMSG(`ALERT! Dialingport is not opened.`)
 			}
-		}			
+		}
 	}
 	
 	// LCD check
-	if (cfg.PROJECT_LCD_USE === true){
+	if (cfg.PROJECT_LCD_USE == 'true'){
 		checkLcdPort = await server.checkLcdPort()
-		if(lcdAlertCnt == 0){
-			alert.sendMSG(`ALERT! LCD is down.`)
-		} 
+
+		if(checkLcdPort === false){
+			if(lcdAlertCnt == 0){
+				alert.sendMSG(`ALERT! LCD is down.`)
+			}
 		
-		lcdAlertCnt = lcdAlertCnt < cfg.SERVER_ALERT_LCD_WAIT ? lcdAlertCnt + 1 : 0 
-//		logger.info(`lcdAlertCnt : ${lcdAlertCnt}`)
+			lcdAlertCnt = lcdAlertCnt < cfg.SERVER_ALERT_LCD_WAIT ? lcdAlertCnt + 1 : 0 
+		}
 	}
 		
 		
@@ -149,14 +177,17 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	//	
 	//	console.log('====================================\n\n')
 		
+	executeCnt = executeCnt < 5 ? executeCnt + 1 : 0 //execute count history limit 5   
 })//.start()
 
 const botStart = (() => {
 	botJob.start()
+	botStatusFlag = true
 })
 
 const botStop = (() => {
 	botJob.stop()
+	botStatusFlag = false
 })
 
 const botStatus = (() => {
