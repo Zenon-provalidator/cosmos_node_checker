@@ -89,7 +89,10 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	if(blockCheck.length > 1){ //need history
 		if(heightDiff > cfg.SERVER_ALERT_BLOCK_ERROR_RANGE){ // server block height is abnormal
 			let rpcHeight = await rpc.getRpcHeight()
-			alert.sendMSG(`ALERT! Server height is abnormal.\n${cfg.EXTERN_RPC_URL}/status\nExtern=${rpcHeight.toLocaleString()}\nDiff=${heightDiff.toLocaleString()}\nCurrentblockheight=${blockCheck[executeCnt].toLocaleString()}\nPreblockheight=${blockCheck[executeCnt-1].toLocaleString()}`)
+			//block height smaller than extern block height
+			if(blockCheck[executeCnt] < rpcHeight -1 ){
+				alert.sendMSG(`ALERT! Server height is abnormal.\n${cfg.EXTERN_RPC_URL}/status\nExtern=${rpcHeight.toLocaleString()}\nDiff=${heightDiff.toLocaleString()}\nCurrentblockheight=${blockCheck[executeCnt].toLocaleString()}\nPreblockheight=${blockCheck[executeCnt-1].toLocaleString()}`)
+			}
 		} else {
 			let rpcHeight = await rpc.getRpcHeight()
 			if(blockCheck[executeCnt] === blockCheck[executeCnt-1] === blockCheck[executeCnt-2] === blockCheck[executeCnt-3] === blockCheck[executeCnt-4]){ //chain is stop
