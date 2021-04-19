@@ -136,12 +136,14 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 			if (checkValidatorConnect === false) {
 				if(checkDialPort) {
 					if(validatorConnectTryCnt == 0){
-						alert.sendMSG(`ALERT! Validator is not connected. Try connect validator.`)
-						let connectValidator = await server.connectValidator()
+//						alert.sendMSG(`ALERT! Validator is not connected. Try connect validator.`)
+						logger.warn(`ALERT! Validator is not connected. Try connect validator.`)
+						await server.connectValidator()
+//						let connectValidator = await server.connectValidator()
 						
-						if(connectValidator === false){
-							alert.sendMSG(`ALERT! Validator connect fail.`)
-						}
+//						if(connectValidator === false){
+//							alert.sendMSG(`ALERT! Validator connect fail.`)
+//						}
 					}
 					validatorConnectTryCnt = validatorConnectTryCnt < cfg.SERVER_ALERT_VALIDATORCONNECT_WAIT ? validatorConnectTryCnt + 1 : 0
 				} else {
