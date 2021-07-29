@@ -29,7 +29,8 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	let checkDialPort = await server.checkDialPort()
 	let checkLcdPort = false
 	let checkValidatorConnect = false
-	let checkValidatorSign = await server.checkValidatorSign(blockHeight)
+	// sifchain added
+	let checkValidatorSign = await cfg.PROJECT_NAME == 'sifnode' ? server.checkValidatorSignHome(blockHeight) : server.checkValidatorSign(blockHeight)
 	
 	telegramBot.setVariables({
 		mem : mem,

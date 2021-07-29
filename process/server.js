@@ -122,6 +122,14 @@ const checkValidatorSign = (async (latestHeight) => {
 	return count > 0 ? true : false
 })
 
+// validator sign check home
+const checkValidatorSignHome = (async (latestHeight) => {
+	let cmd = `${cfg.PROJECT_CLIENT_NAME} q block ${latestHeight} --home=${cfg.PROJECT_DISK_NAME} | jq .block.last_commit.signatures[].validator_address | grep ${cfg.VALIDATOR_HASH} | wc -l`
+	let res = await exec(cmd)
+	let count = parseInt(res.toString())	
+	return count > 0 ? true : false
+})
+
 // connect validator
 const connectValidator = (async () => {
 	let cmd = `curl --globoff 'http://localhost:${cfg.PROJECT_DIAL_PORT}/dial_peers?persistent=true&peers=\["${cfg.VALIDATOR_NODE_ID}@${cfg.VALIDATOR_SERVER_IP}:${cfg.VALIDATOR_DAEMON_PORT}"\]'`
