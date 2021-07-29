@@ -168,20 +168,20 @@ const botJob = new CronJob(`*/10 * * * * *`, async function () {
 	}
 		
 		
-	//	console.log('====================================')
-	//	
-	//	console.log(`mem : ${mem}`)
-	//	console.log(`cpu : ${cpu}`)
-	//	console.log(`disk : ${disk}`)
-	//	console.log(`peer : ${peer}`)
-	//	console.log(`blockHeight : ${blockHeight}`)
-	//	console.log(`rpcHeight : ${rpcHeight}`)
-	//	console.log(`checkDialPort : ${checkDialPort}`)
-	//	console.log(`checkLcdPort : ${checkLcdPort}`)
-	//	console.log(`checkValidatorConnect : ${checkValidatorConnect}`)
-	//	console.log(`checkValidatorSign : ${checkValidatorSign}`)
-	//	
-	//	console.log('====================================\n\n')
+	console.log('====================================')
+	
+	console.log(`mem : ${mem}`)
+	console.log(`cpu : ${cpu}`)
+	console.log(`disk : ${disk}`)
+	console.log(`peer : ${peer}`)
+	console.log(`blockHeight : ${blockHeight}`)
+	console.log(`rpcHeight : ${rpcHeight}`)
+	console.log(`checkDialPort : ${checkDialPort}`)
+	console.log(`checkLcdPort : ${checkLcdPort}`)
+	console.log(`checkValidatorConnect : ${checkValidatorConnect}`)
+	console.log(`checkValidatorSign : ${checkValidatorSign}`)
+	
+	console.log('====================================\n\n')
 		
 	executeCnt = executeCnt < 5 ? executeCnt + 1 : 0 //execute count history limit 5   
 })//.start()
