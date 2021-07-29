@@ -153,5 +153,6 @@ module.exports = {
 	checkLcdPort : checkLcdPort,
 	checkValidatorConnect : checkValidatorConnect,
 	checkValidatorSign : checkValidatorSign,
+	checkValidatorSignHome : checkValidatorSignHome,
 	connectValidator : connectValidator
 }
