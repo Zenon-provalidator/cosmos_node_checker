@@ -6,19 +6,19 @@ const logger = require('./logger').log4js
 //*********daemon ***********
 // start
 const startDaemon = (async () => {
-        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_start.sh`
+        let cmd = cfg.START_DAEMON_CMD
         let res = await exec(cmd)
         return res.toString()
 })
-
+// stop
 const stopDaemon = (async () => {
-        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_stop.sh`
+		let cmd = cfg.STOP_DAEMON_CMD
         let res = await exec(cmd)
         return res.toString()
 })
-
+// restart
 const restartDaemon = (async () => {
-        let cmd = `~/bin/${cfg.PROJECT_DAEMON_NAME}_restart.sh`
+		let cmd = cfg.RESTART_DAEMON_CMD
         let res = await exec(cmd)
         return res.toString()
 })
