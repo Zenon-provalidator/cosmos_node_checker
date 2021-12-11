@@ -33,7 +33,7 @@ bot.command('server', (ctx) => {
 	try{
 		let blockHeight = typeof variables.blockHeight === undefined ? undefined : variables.blockHeight.toLocaleString()
 		//let rpcHeight = typeof variables.rpcHeight === undefined ? undefined : variables.rpcHeight.toLocaleString()
-		ctx.reply(`Memory : ${variables.mem}%\nCpu : ${variables.cpu}%\nDisk : ${variables.disk}%\nPeerCount : ${variables.peer}\nLatestHeight : ${blockHeight}`)
+		ctx.reply(`${cfg.SERVER_NAME}_${cfg.SERVER_TYPE}\nMemory : ${variables.mem}%\nCpu : ${variables.cpu}%\nDisk : ${variables.disk}%\nPeerCount : ${variables.peer}\nLatestHeight : ${blockHeight}`)
 	} catch (err){
 		ctx.reply(err)
 	}	
