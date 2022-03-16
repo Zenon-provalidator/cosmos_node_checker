@@ -73,8 +73,9 @@ bot.command('balance', async(ctx) => {
 })
 
 bot.command('send', async(ctx) => {
-	logger.info(ctx.update.message.text)
-    const res = await faucet.getBalances(ctx.update.message.text)
+	let text = ctx.update.message.text
+	let parts = text.split(" ")
+    const res = await faucet.sendToken(parts[1])
     logger.info(res)
     ctx.reply(res)
 })
