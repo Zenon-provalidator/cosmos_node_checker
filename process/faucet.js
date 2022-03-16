@@ -21,7 +21,7 @@ const getBalances = (async (addr) => {
 //send
 //cerberusd tx bank send cerberus1tnmjjj5ugcunyy75q3c3pn62qpwnf50pxcqpp3 cerberus12pgtk90nlrzqftdl2w9kewe6rrkzaszk7yk9cz 2000000ucrbrus --fees=10000ucrbrus --chain-id=ceruberus-chain-1 -y
 const sendToken = (async (addr) => {
-	let cmd = `echo ${cfg.PASSPHRASE} | ${cfg.BINARY} tx bank send {cfg.WALLET} ${addr} ${cfg.SEND_AMOUNT}${cfg.DENOM} --fees="${cfg.FEE}${cfg.DENOM}" --chain-id="${cfg.CHAIN_ID}" -y`
+	let cmd = `echo ${cfg.PASSPHRASE} | ${cfg.BINARY} tx bank send ${cfg.WALLET} ${addr} ${cfg.SEND_AMOUNT}${cfg.DENOM} --fees="${cfg.FEE}${cfg.DENOM}" --chain-id="${cfg.CHAIN_ID}" -y`
 	let res = await exec(cmd)
 	return res.toString()
 })
