@@ -67,10 +67,9 @@ bot.command('daemon_restart', async(ctx) => {
 bot.command('balance', async(ctx) => {
 	let text = ctx.update.message.text
 	let parts = text.split(" ")
-	console.log(parts[1])
-//    const res = await faucet.getBalances(ctx.update.message.text)
-//    logger.info(res)
-//    ctx.reply(res)
+    const res = await faucet.getBalances(parts[1])
+    logger.info(res)
+    ctx.reply(res)
 })
 
 bot.command('send', async(ctx) => {
