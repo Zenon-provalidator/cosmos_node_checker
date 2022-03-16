@@ -5,6 +5,7 @@ const path = require('path')
 const telegraf = require('telegraf')
 const server = require('./server')
 const alert = require('./alert')
+const faucet = require('./faucet')
 const bot = new telegraf(cfg.TELEGRAM_BOT_TOKEN)
 
 let variables = {}
@@ -61,6 +62,18 @@ bot.command('daemon_restart', async(ctx) => {
         const res = await server.restartDaemon()
         logger.info(res)
         ctx.reply(res)
+})
+
+bot.command('balance', async(ctx) => {
+        const res = await faucet.getBalances(ctx.update.message.text)
+        logger.info(res)
+        ctx.reply(res)
+})
+
+bot.command('send', async(ctx) => {
+    const res = await faucet.getBalances(ctx.update.message.text)
+    logger.info(res)
+    ctx.reply(res)
 })
 
 bot.startPolling()
