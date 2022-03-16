@@ -53,24 +53,26 @@ bot.command('daemon_start', async(ctx) => {
 })
 
 bot.command('daemon_stop', async(ctx) => {
-        const res = await server.stopDaemon()
-        logger.info(res)
-        ctx.reply(res)
+    const res = await server.stopDaemon()
+    logger.info(res)
+    ctx.reply(res)
 })
 
 bot.command('daemon_restart', async(ctx) => {
-        const res = await server.restartDaemon()
-        logger.info(res)
-        ctx.reply(res)
+    const res = await server.restartDaemon()
+    logger.info(res)
+    ctx.reply(res)
 })
 
 bot.command('balance', async(ctx) => {
-        const res = await faucet.getBalances(ctx.update.message.text)
-        logger.info(res)
-        ctx.reply(res)
+	logger.info(ctx.update.message.text)
+    const res = await faucet.getBalances(ctx.update.message.text)
+    logger.info(res)
+    ctx.reply(res)
 })
 
 bot.command('send', async(ctx) => {
+	logger.info(ctx.update.message.text)
     const res = await faucet.getBalances(ctx.update.message.text)
     logger.info(res)
     ctx.reply(res)
